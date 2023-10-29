@@ -1,0 +1,60 @@
+INSERT INTO usuario (usuarioID, nombre, apellido, tipo, correo_electrónico, contrasenia, dni, numero_tarjeta, telefono)
+VALUES (1, 'Pedro', 'Lopez', 'Cliente', 'pedro.lopez10@gmail.com', 'clave123', '62345678', 1234567890, '923456789'),
+(2, 'Oscar', 'Huerta', 'Cliente', 'oscar.huerta30@gmail.com', 'clave124', '82345678', 1234561212, '951468956'),
+(3, 'Maria', 'Castillo', 'Cliente', 'maria.castillo60@gmail.com', 'clave125', '32345678', 1234561457, '935648754')
+
+INSERT INTO compra (compraID, fecha_compra, compras_realizadas, id_usuario)
+VALUES (1, '2023-05-15 11:30:00', 24, 1),
+(2, '2023-06-15 09:30:00', 25, 2),
+(3, '2023-07-15 10:30:00', 26, 3)
+
+INSERT INTO pago (pagoID, id_compra, tipo_pago, monto)
+VALUES (1, 1, 'Tarjeta de Crédito', 400.00),
+(2, 2, 'Tarjeta de Debito', 2560.00),
+(3, 3, 'Tarjeta de Crédito', 1800.00)
+
+INSERT INTO suscripcion (suscripcionID, id_usuario, tipo_suscripcion, fecha_inicio, fecha_final, beneficio)
+VALUES (1, 1, 'Premium', '2023-05-01', '2023-05-31', 'Descuentos a promociones'),
+(2, 2, 'Basico', '2023-06-01', '2023-06-30', 'Comparacion de precios'),
+(3, 3, 'Premium', '2023-07-01', '2023-07-31', 'Descuentos a promociones')
+
+INSERT INTO producto (productoID, nombre, descripcion, categoria, precio, stock)
+VALUES (1, 'Zapatillas', 'Adidas ADIOS', 'Deporte', 400.00, 30),
+(2, 'Laptop', 'Laptop de alta gama', 'Electrónica', 2560.00, 20),
+(3, 'IPAD', 'IPAD de alta gama', 'Electrónica', 1800.00, 12)
+
+INSERT INTO tienda (tiendaID, nombre, direccion, tipo_tienda)
+VALUES (111, 'Tienda Adidas', 'Salaverry', 'Deporte'),
+(222, 'Tienda Ripley', 'San Miguel', 'Retail'),
+(333, 'Tienda Apple Store', 'San Miguel', 'Electrónica')
+
+INSERT INTO anuncio (anuncioID, contenido, fecha, id_tienda)
+VALUES (1, '¡Gran oferta en zapatillas!', '2023-05-01 08:00:00', 111),
+(2, '¡Descuentos en Laptops!', '2023-06-01 08:00:00', 222),
+(3, '¡20% descuento IPAD!', '2023-07-01 08:00:00', 333)
+
+INSERT INTO descuento (ofertaID, descuento, fecha_inicio, fecha_final, id_producto)
+VALUES (1, 0.30, '2023-05-01 08:00:00', '2023-05-31 23:59:59', 1),
+(2, 0.40, '2023-06-01 08:00:00', '2023-06-30 23:59:59', 2),
+(3, 0.20, '2023-07-01 08:00:00', '2023-07-31 23:59:59', 3)
+
+
+INSERT INTO detalle_compra (detalle_compraID, cantidad, id_compra, id_producto)
+VALUES (1, 2, 1, 1),
+(2, 1, 2, 2),
+(3, 1, 3, 3)
+
+INSERT INTO busqueda (fecha_busqueda, id_usuario, id_producto)
+VALUES ('2023-05-14 15:30:00', 1, 1),
+('2023-06-17 16:20:00', 2, 2),
+('2023-07-10 14:10:00', 3, 3)
+
+INSERT INTO producto_tienda (id_tienda, id_producto)
+VALUES (111, 1),
+(222, 2),
+(333, 3)
+
+INSERT INTO producto_anuncio (id_producto, id_anuncio)
+VALUES (1, 1),
+(2, 2),
+(3, 3)
