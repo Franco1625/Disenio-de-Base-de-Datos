@@ -57,7 +57,7 @@ GROUP BY nombre, apellido, correo_electrónico, telefono
 HAVING COUNT(c.compraID) >= @compras_minimas;
 go
 
-EXEC UsuariosSegunComprasRealizadas 1;
+EXEC UsuariosSegunComprasRealizadas 2;
 go
 
 
@@ -75,8 +75,9 @@ go
 exec SuscripcionesPorUsuarioID 1;
 go
 
--- Obtener los usuarios que han realizado compras en una tienda específica. 
---Este procedure permite mostrar los usuarios que han realizado compras en una tienda que ingresemos
+
+-- Mostrar los anuncios disponibles en una tienda específica
+--Este procedure permite mostrar los anuncios disponibles por tienda
 
 CREATE PROCEDURE UsuariosPorTienda
 @nombre_tienda varchar(100)
@@ -88,7 +89,7 @@ INNER JOIN tienda t ON c.id_usuario = t.tiendaID
 WHERE t.nombre = @nombre_tienda;
 go
 
-EXEC UsuariosPorTienda 'Tienda Electrónica';
+EXEC UsuariosPorTienda 'Tienda Ripley';
 go
 
 -- Obtener información detallada de un producto por su nombre.
@@ -102,7 +103,7 @@ FROM producto
 WHERE nombre = @nombre_producto;
 go
 
-EXEC DetalleProductoPorNombre 'Producto A';
+EXEC DetalleProductoPorNombre 'Zapatillas';
 go
 
 -- Obtener el historial de compras de un usuario por su ID. 
@@ -132,7 +133,7 @@ INNER JOIN pago p ON c.compraID = p.id_compra
 WHERE p.tipo_pago = @tipo_pago;
 go
 
-EXEC UsuariosPorMetodoPago 'Efectivo';
+EXEC UsuariosPorMetodoPago 'Tarjeta de crédito';
 go
 
 --  Obtener los productos disponibles en una categoría específica.
@@ -146,8 +147,9 @@ FROM producto
 WHERE categoria = @categoria_producto AND stock > 0;
 go
 
-EXEC ProductosPorCategoria 'Moda';
+EXEC ProductosPorCategoria 'Deporte';
 go
+
 
 -- Obtener compras realizadas en una fecha específica. 
 --Este procedure muestra la información detallada de las compras que se realizaron en un fecha que ingresemos.
@@ -158,9 +160,9 @@ AS
 SELECT *
 FROM compra
 WHERE fecha_compra = @fecha_compra;
-go
+go 
 
-EXEC ComprasPorFecha '2023-11-23';
+EXEC ComprasPorFecha '2023-05-15';
 go
 
 -- Total de Compras por Tipo de Pago.
