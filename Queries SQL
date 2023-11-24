@@ -1,3 +1,4 @@
+-- Queries Básicas
 -- Listar todas las tiendas que sean de tipo 'Electrónica'.
 -- Esta query nos permite mostrar una lista con todas las tiendas que contengan el campo “Electrónica” 
 
