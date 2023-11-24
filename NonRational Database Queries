@@ -1,0 +1,152 @@
+-- Listar todos los usuarios junto con sus compras y suscripciones:
+
+db.usuarios.aggregate([
+  {
+    $lookup: {
+      from: "compras",
+      localField: "usuarioID",
+      foreignField: "id_usuario",
+      as: "compras"
+    }
+  },
+  {
+    $lookup: {
+      from: "suscripciones",
+      localField: "usuarioID",
+      foreignField: "id_usuario",
+      as: "suscripciones"
+    }
+  }
+]);
+
+-- Contar el número total de compras realizadas:
+
+		db.compras.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalCompras: { $sum: "$comprasRealizadas" }
+    }
+  }
+]);
+
+
+-- Obtener la suscripción más reciente de cada usuario:
+
+db.suscripciones.aggregate([
+  {
+    $sort: { fechaInicio: -1 }
+  },
+  {
+    $group: {
+      _id: "$id_usuario",
+      ultimaSuscripcion: { $first: "$$ROOT" }
+    }
+  }
+]);
+
+-- Listar los usuarios que han realizado compras después de una fecha específica:
+
+db.compras.aggregate([
+  {
+    $match: { fechaCompra: { $gte: ISODate("2023-03-01T00:00:00Z") } }
+  },
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "id_usuario",
+      foreignField: "usuarioID",
+      as: "usuario"
+    }
+  },
+  {
+    $unwind: "$usuario"
+  }
+]);
+
+-- Calcular el total gastado por cada usuario:
+
+db.compras.aggregate([
+  {
+    $group: {
+      _id: "$id_usuario",
+      totalGastado: { $sum: "$comprasRealizadas" }
+    }
+  }
+]);
+
+-- Listar usuarios con suscripciones Premium:
+
+db.suscripciones.aggregate([
+  {
+    $match: { tipo: "Premium" }
+  },
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "id_usuario",
+      foreignField: "usuarioID",
+      as: "usuario"
+    }
+  },
+  {
+    $unwind: "$usuario"
+  }
+]);
+
+-- Encontrar usuarios que no han realizado compras:
+
+db.usuarios.aggregate([
+  {
+    $lookup: {
+      from: "compras",
+      localField: "usuarioID",
+      foreignField: "id_usuario",
+      as: "compras"
+    }
+  },
+  {
+    $match: { compras: { $size: 0 } }
+  }
+]);
+
+-- Calcular el promedio de compras realizadas por usuario:
+
+db.compras.aggregate([
+  {
+    $group: {
+      _id: "$id_usuario",
+      promedioCompras: { $avg: "$comprasRealizadas" }
+    }
+  }
+]);
+
+-- Encontrar usuarios con suscripciones vencidas:
+
+db.suscripciones.aggregate([
+  {
+    $match: { fechaFinal: { $lt: new Date() } }
+  },
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "id_usuario",
+      foreignField: "usuarioID",
+      as: "usuario"
+    }
+  },
+  {
+    $unwind: "$usuario"
+  }
+]);
+
+-- Contar el número de usuarios por ciudad:
+
+db.usuarios.aggregate([
+  {
+    $group: {
+      _id: "$direccion.ciudad",
+      totalUsuarios: { $sum: 1 }
+    }
+  }
+]);
