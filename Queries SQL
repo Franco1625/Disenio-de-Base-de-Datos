@@ -1,0 +1,193 @@
+-- Listar todas las tiendas que sean de tipo 'Electrónica'.
+-- Esta query nos permite mostrar una lista con todas las tiendas que contengan el campo “Electrónica” 
+
+SELECT *
+FROM tienda
+WHERE tipo_tienda = 'Electrónica';
+go
+
+-- Listar información sobre los pagos realizados con un monto menor a S/100. 
+-- Este query permite acceder a información más detallada sobre los pagos con un monto menor a 100
+
+SELECT *
+FROM pago
+WHERE monto < 100;
+go
+
+-- Listar información de los productos cuyo stock sea mayor a 50 en orden ascendente según el stock disponible. 
+-- Este query nos detalla la información de los productos con stock mayor a 50 y ordenados según el orden correspondiente
+
+SELECT nombre, descripcion, categoria, precio, stock
+FROM producto
+WHERE stock > 50
+ORDER BY stock ASC;
+go
+
+--Listar todos los usuarios que no han registrado su número de tarjeta. 
+-- Este query muestra todos los usuarios que todavía no han registrado su tarjeta de crédito/débito.
+
+SELECT *
+FROM usuario
+WHERE numero_tarjeta IS NULL;
+go
+
+--Listar las suscripciones ordenadas de forma descendente según la fecha final. 
+--Este query nos da la información de las suscripciones en orden según la fecha límite.
+
+SELECT *
+FROM suscripcion
+ORDER BY fecha_final DESC;
+go
+
+-- Queries intermedias
+
+
+
+-- Obtener usuarios según la cantidad mínima de compras realizadas. 
+-- Este procedure permite mostrar los usuarios según las compras mínimas que ingresemos.
+
+CREATE PROCEDURE UsuariosSegunComprasRealizadas
+@compras_minimas int
+AS
+SELECT nombre, apellido, correo_electrónico, telefono, COUNT(c.compraID) AS TotalCompras
+FROM usuario u
+LEFT JOIN compra c ON u.usuarioID = c.id_usuario
+GROUP BY nombre, apellido, correo_electrónico, telefono
+HAVING COUNT(c.compraID) >= @compras_minimas;
+go
+
+EXEC UsuariosSegunComprasRealizadas 1;
+go
+
+
+--Obtener las suscripciones de un usuario por su ID. 
+--Este procedure permite buscar las suscripciones de un usuario con la id que ingresemos
+
+CREATE PROCEDURE SuscripcionesPorUsuarioID
+@usuario_id int
+AS
+SELECT *
+FROM suscripcion
+WHERE id_usuario = @usuario_id;
+go
+
+exec SuscripcionesPorUsuarioID 1;
+go
+
+-- Obtener los usuarios que han realizado compras en una tienda específica. 
+--Este procedure permite mostrar los usuarios que han realizado compras en una tienda que ingresemos
+
+CREATE PROCEDURE UsuariosPorTienda
+@nombre_tienda varchar(100)
+AS
+SELECT u.nombre, u.apellido, u.correo_electrónico, u.telefono
+FROM usuario u
+INNER JOIN compra c ON u.usuarioID = c.id_usuario
+INNER JOIN tienda t ON c.id_usuario = t.tiendaID
+WHERE t.nombre = @nombre_tienda;
+go
+
+EXEC UsuariosPorTienda 'Tienda Electrónica';
+go
+
+-- Obtener información detallada de un producto por su nombre.
+--Este procedure permite mostrar la información detallada de un producto por el nombre que ingresemos.
+
+CREATE PROCEDURE DetalleProductoPorNombre
+@nombre_producto varchar(100)
+AS
+SELECT *
+FROM producto
+WHERE nombre = @nombre_producto;
+go
+
+EXEC DetalleProductoPorNombre 'Producto A';
+go
+
+-- Obtener el historial de compras de un usuario por su ID. 
+--Este procedure muestra el historial de compras con el id que ingresemos del usuario.
+
+CREATE PROCEDURE HistorialComprasPorUsuarioID
+@usuario_id int
+AS
+SELECT *
+FROM compra
+WHERE id_usuario = @usuario_id;
+go
+
+EXEC HistorialComprasPorUsuarioID 3;
+go
+
+-- Obtener los usuarios que han utilizado un método de pago específico. 
+--Este procedure muestra los usuarios que han comprado con un tipo de pago que ingresemos.
+
+CREATE PROCEDURE UsuariosPorMetodoPago
+@tipo_pago varchar(100)
+AS
+SELECT u.nombre, u.apellido, u.correo_electrónico, u.telefono
+FROM usuario u
+INNER JOIN compra c ON u.usuarioID = c.id_usuario
+INNER JOIN pago p ON c.compraID = p.id_compra
+WHERE p.tipo_pago = @tipo_pago;
+go
+
+EXEC UsuariosPorMetodoPago 'Efectivo';
+go
+
+--  Obtener los productos disponibles en una categoría específica.
+--Este procedure muestra la información detallada de productos disponibles según la categoría que ingresemos.
+
+CREATE PROCEDURE ProductosPorCategoria
+@categoria_producto varchar(100)
+AS
+SELECT *
+FROM producto
+WHERE categoria = @categoria_producto AND stock > 0;
+go
+
+EXEC ProductosPorCategoria 'Moda';
+go
+
+-- Obtener compras realizadas en una fecha específica. 
+--Este procedure muestra la información detallada de las compras que se realizaron en un fecha que ingresemos.
+
+CREATE PROCEDURE ComprasPorFecha
+@fecha_compra date
+AS
+SELECT *
+FROM compra
+WHERE fecha_compra = @fecha_compra;
+go
+
+EXEC ComprasPorFecha '2023-11-23';
+go
+
+-- Total de Compras por Tipo de Pago.
+--Este procedure nos muestra el total de compras por tipo de pago.
+
+CREATE PROCEDURE ComprasTotalesPorTipoDePago
+AS
+BEGIN
+    SELECT tipo_pago, COUNT(*) AS TotalCompras
+    FROM pago
+    GROUP BY tipo_pago;
+END
+
+EXEC ComprasTotalesPorTipoDePago;
+go
+
+--  Productos Agotados. 
+--Este procedure muestra la información detallada de los productos que no estén stock
+
+CREATE PROCEDURE ProductosAgotados
+AS
+BEGIN
+    SELECT nombre, descripcion, categoria
+    FROM producto
+    WHERE stock <= 0;
+END
+go
+
+EXEC ProductosAgotados;
+go
+
